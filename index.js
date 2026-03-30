@@ -42,7 +42,24 @@ app.post('/print', async (req, res) => {
       });
 
       const safeContent = job.content;
-      const xml = '<?xml version="1.0" encoding="utf-8"?><PrintRequestInfo Version="3.00"><ePOSPrint><Parameter><devid>local_printer</devid><timeout>30</timeout></Parameter><PrintData><epos-print xmlns="http://www.epson-pos.com/schemas/2011/03/epos-print"><text>HELLO WORLD&#10;</text><cut type="feed"/></epos-print></PrintData></ePOSPrint></PrintRequestInfo>';
+      const xml = `<?xml version="1.0" encoding="utf-8"?>
+<PrintRequestInfo Version="2.00">
+  <ePOSPrint>
+    <Parameter>
+      <devid>local_printer</devid>
+      <timeout>30</timeout>
+    </Parameter>
+    <PrintData>
+      <epos-print xmlns="http://www.epson-pos.com/schemas/2011/03/epos-print">
+        <text>------------------------------&#10;</text>
+        <text>      ATELIER PETERHEAD       &#10;</text>
+        <text>------------------------------&#10;</text>
+        <text>HELLO WORLD&#10;&#10;&#10;</text>
+        <cut type="feed"/>
+      </epos-print>
+    </PrintData>
+  </ePOSPrint>
+</PrintRequestInfo>`;
 
       console.log('Sending job', job.id, 'to', location);
       console.log('XML:', xml);
