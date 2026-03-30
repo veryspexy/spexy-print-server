@@ -41,7 +41,7 @@ app.post('/print', async (req, res) => {
         body: JSON.stringify({ status: 'printing' })
       });
 
-      const safeContent = job.content.replace(/\n/g, '').replace(/\r/g, '');
+      const safeContent = job.content;
       const xml = '<?xml version="1.0" encoding="utf-8"?><PrintRequestInfo Version="2.00"><ePOSPrint><Parameter><devid>local_printer</devid><timeout>30</timeout></Parameter><PrintData>' + safeContent + '</PrintData></ePOSPrint></PrintRequestInfo>';
 
       console.log('Sending job', job.id, 'to', location);
