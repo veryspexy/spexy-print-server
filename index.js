@@ -41,7 +41,8 @@ app.post('/print', async (req, res) => {
         body: JSON.stringify({ status: 'printing' })
       });
 
-      const xml = '<?xml version="1.0" encoding="utf-8"?><PrintRequestInfo Version="2.00"><ePOSPrint><Parameter><devid>local_printer</devid><timeout>30</timeout></Parameter><PrintData>' + job.content + '</PrintData></ePOSPrint></PrintRequestInfo>';
+      const safeContent = job.content.replace(/\n/g, '').replace(/\r/g, '');
+      const xml = '<?xml version="1.0" encoding="utf-8"?><PrintRequestInfo Version="2.00"><ePOSPrint><Parameter><devid>local_printer</devid><timeout>30</timeout></Parameter><PrintData>' + safeContent + '</PrintData></ePOSPrint></PrintRequestInfo>';
 
       console.log('Sending job', job.id, 'to', location, 'xml length:', xml.length);
       res.set('Content-Type', 'text/xml; charset=utf-8');
@@ -53,7 +54,7 @@ app.post('/print', async (req, res) => {
     if (body.ConnectionType === 'SetResponse') {
       const responseFile = body.ResponseFile || '';
       const success = responseFile.includes('success="true"');
-      const code = responseFile.match(/code="([^"]+)"/)?.[1];
+      const code = responseFile.match(/code="([^<]+)"/)?.[1];
       console.log('SetResponse', location, 'success:', success, 'code:', code);
       await sbFetch(`/rest/v1/print_jobs?location=eq.${encodeURIComponent(location)}&status=eq.printing&order=created_at.asc&limit=1`, {
         method: 'PATCH',
