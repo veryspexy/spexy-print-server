@@ -45,18 +45,7 @@ app.post('/print', async (req, res) => {
       });
 
       const content = job.content.replace(/\n/g, '&#10;');
-      const xml = `<?xml version="1.0" encoding="utf-8"?>
-<PrintRequestInfo Version="2.00">
-  <ePOSPrint>
-    <Parameter>
-      <devid>local_printer</devid>
-      <timeout>30</timeout>
-    </Parameter>
-    <PrintData>
-      ${content}
-    </PrintData>
-  </ePOSPrint>
-</PrintRequestInfo>`;
+      const xml = '<?xml version="1.0" encoding="utf-8"?><PrintRequestInfo Version="2.00"><ePOSPrint><Parameter><devid>local_printer</devid><timeout>30</timeout></Parameter><PrintData>' + content + '</PrintData></ePOSPrint></PrintRequestInfo>';
 
       console.log('Sending job', job.id, 'to', location);
       res.set('Content-Type', 'text/xml; charset=utf-8');
