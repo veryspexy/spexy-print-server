@@ -22,16 +22,8 @@ async function sbFetch(path, options = {}) {
 
 app.post('/print', async (req, res) => {
   const location = req.query.location || 'Peterhead';
-  const contentType = req.headers['content-type'] || '(none)';
-
-  // ── Debug logging ────────────────────────────────────────────────────────
-  console.log('[/print] ── incoming request ──────────────────────────────');
-  console.log('[/print] content-type :', contentType);
-  console.log('[/print] all headers  :', JSON.stringify(req.headers, null, 2));
-  // ────────────────────────────────────────────────────────────────────────
 
   const body = req.body || {};
-  console.log('[/print] parsed body  :', JSON.stringify(body, null, 2));
 
   if (body.ConnectionType === 'GetRequest') {
     const sbRes = await sbFetch(`/rest/v1/print_jobs?location=eq.${encodeURIComponent(location)}&status=eq.pending&order=created_at.asc&limit=1`);
