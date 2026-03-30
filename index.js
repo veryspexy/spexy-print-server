@@ -44,7 +44,8 @@ app.post('/print', async (req, res) => {
       const safeContent = job.content.replace(/\n/g, '').replace(/\r/g, '');
       const xml = '<?xml version="1.0" encoding="utf-8"?><PrintRequestInfo Version="2.00"><ePOSPrint><Parameter><devid>local_printer</devid><timeout>30</timeout></Parameter><PrintData>' + safeContent + '</PrintData></ePOSPrint></PrintRequestInfo>';
 
-      console.log('Sending job', job.id, 'to', location, 'xml length:', xml.length);
+      console.log('Sending job', job.id, 'to', location);
+      console.log('XML:', xml);
       res.set('Content-Type', 'text/xml; charset=utf-8');
       res.set('Content-Length', Buffer.byteLength(xml, 'utf-8'));
       res.set('Connection', 'close');
