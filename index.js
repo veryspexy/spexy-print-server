@@ -7,9 +7,6 @@ app.use(express.urlencoded({ extended: true }));
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_KEY;
 
-console.log('SUPABASE_URL set:', !!SUPABASE_URL);
-console.log('SUPABASE_KEY set:', !!SUPABASE_KEY);
-
 async function sbFetch(path, options = {}) {
   const res = await fetch(`${SUPABASE_URL}${path}`, {
     ...options,
@@ -44,10 +41,9 @@ app.post('/print', async (req, res) => {
         body: JSON.stringify({ status: 'printing' })
       });
 
-      const content = job.content.replace(/\n/g, '&#10;');
-      const xml = '<?xml version="1.0" encoding="utf-8"?><PrintRequestInfo Version="2.00"><ePOSPrint><Parameter><devid>local_printer</devid><timeout>30</timeout></Parameter><PrintData>' + content + '</PrintData></ePOSPrint></PrintRequestInfo>';
+      const xml = '<?xml version="1.0" encoding="utf-8"?><PrintRequestInfo Version="2.00"><ePOSPrint><Parameter><devid>local_printer</devid><timeout>30</timeout></Parameter><PrintData>' + job.content + '</PrintData></ePOSPrint></PrintRequestInfo>';
 
-      console.log('Sending job', job.id, 'to', location);
+      console.log('Sending job', job.id, 'to', location, 'xml length:', xml.length);
       res.set('Content-Type', 'text/xml; charset=utf-8');
       res.set('Content-Length', Buffer.byteLength(xml, 'utf-8'));
       res.set('Connection', 'close');
@@ -71,13 +67,13 @@ app.post('/print', async (req, res) => {
     res.set('Content-Type', 'text/xml; charset=utf-8');
     return res.status(200).send('');
   } catch(e) {
-    console.error('Print handler error:', e.message, e.stack);
+    console.error('Print handler error:', e.message);
     res.set('Content-Type', 'text/xml; charset=utf-8');
     return res.status(200).send('');
   }
 });
 
-app.get('/health', (req, res) => res.json({ ok: true, supabase_url: !!SUPABASE_URL, supabase_key: !!SUPABASE_KEY }));
+app.get('/health', (req, res) => res.json({ ok: true }));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Print server running on port ${PORT}`));
